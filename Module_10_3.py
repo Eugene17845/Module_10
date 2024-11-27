@@ -12,8 +12,12 @@ class Bank(Thread):
 
     def deposit(self):
         transaction = 100
+        self.lock.acquire()
         while transaction >= 0:
             transaction -= 1
+            if self.balance<500:
+               self.lock.locked()
+
             if self.balance >= 500 and self.lock.locked():
                 self.lock.release()
             rand = random.randint(50,500)
@@ -23,7 +27,9 @@ class Bank(Thread):
 
     def take(self):
         transaction = 100
+        self.lock.acquire()
         while transaction >= 0:
+
             transaction -= 1
             rand = random.randint(50,500)
             print(f'Запрос на {rand}')
@@ -32,7 +38,7 @@ class Bank(Thread):
                 print(f'Снятие: {rand}. Баланс: {self.balance}')
             else:
                 print('Запрос отклонён, недостаточно средств')
-                self.lock.acquire()
+                self.lock.locked()
             time.sleep(0.001)
 
 bk = Bank()
